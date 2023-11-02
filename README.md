@@ -1,2 +1,2 @@
-# DingNet for Group 5-2
+# DingNet
 ## Group 5-2
