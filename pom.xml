@@ -152,7 +152,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>gui.MainGUI</mainClass>
+                            <mainClass>webserver.WebserverApplication</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
@@ -181,7 +181,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>gui.MainGUI</mainClass>
+                    <mainClass>webserver.WebserverApplication</mainClass>
                 </configuration>
             </plugin>
             <plugin>
