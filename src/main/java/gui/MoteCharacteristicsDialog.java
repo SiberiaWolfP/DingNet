@@ -91,6 +91,9 @@ public class MoteCharacteristicsDialog extends JDialog {
         energyLabel = new JLabel();
         energyLabel.setText("Label");
         panel3.add(energyLabel, new GridConstraints(5, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        latencyLabel = new JLabel();
+        latencyLabel.setText("Label");
+        panel3.add(latencyLabel, new GridConstraints(6, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**

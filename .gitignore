@@ -325,3 +325,26 @@ buildNumber.properties
 # Custom
 
 .idea/vcs.xml
+
+HELP.md
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.settings
+.sts4-cache
+
+### IntelliJ IDEA ###
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/

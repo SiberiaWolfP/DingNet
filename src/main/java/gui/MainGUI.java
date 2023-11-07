@@ -18,10 +18,13 @@ import org.jxmapviewer.input.PanMouseInputListener;
 import org.jxmapviewer.input.ZoomMouseWheelListenerCursor;
 import org.jxmapviewer.viewer.DefaultTileFactory;
 import org.jxmapviewer.viewer.TileFactoryInfo;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import selfadaptation.adaptationgoals.IntervalAdaptationGoal;
 import selfadaptation.adaptationgoals.ThresholdAdaptationGoal;
 import selfadaptation.feedbackloop.GenericFeedbackLoop;
 import util.*;
+import webserver.WebserverApplication;
 
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
@@ -122,7 +125,7 @@ public class MainGUI extends JFrame implements SimulationUpdateListener, Refresh
     private int averageLatency;
 
 
-    public static void main(String[] args) {
+    public static void AppMain(String[] args) {
         SimulationRunner simulationRunner = SimulationRunner.getInstance();
 
         SwingUtilities.invokeLater(() -> {

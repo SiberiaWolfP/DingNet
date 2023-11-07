@@ -5,6 +5,7 @@ import application.pollution.PollutionMonitor;
 import application.routing.AStarRouter;
 import application.routing.RoutingApplication;
 import application.routing.heuristic.SimplePollutionHeuristic;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import gui.MainGUI;
 import iot.mqtt.MQTTClientFactory;
 import iot.networkentity.Gateway;
@@ -33,9 +34,13 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class SimulationRunner {
+    @JsonIgnore
     private static SimulationRunner instance = null;
 
+    @JsonIgnore
     private List<InputProfile> inputProfiles;
+
+    @JsonIgnore
     private List<GenericFeedbackLoop> algorithms;
     private QualityOfService QoS;
 
