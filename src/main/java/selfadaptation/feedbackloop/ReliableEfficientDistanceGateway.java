@@ -108,7 +108,7 @@ public class ReliableEfficientDistanceGateway extends GenericFeedbackLoop {
                 for (double distance : getReliableDistanceGatewayBuffers().get(mote)) {
                     average += distance;
                 }
-                average = average / 4;
+                average = average / 4 * 1000;
 
                 /**
                  * Depending on which interval the average is in, the power setting is adjusted.

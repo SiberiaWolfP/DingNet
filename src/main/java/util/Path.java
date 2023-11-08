@@ -1,5 +1,6 @@
 package util;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.jetbrains.annotations.NotNull;
 import org.jxmapviewer.viewer.GeoPosition;
 
@@ -11,9 +12,11 @@ import java.util.*;
  */
 public class Path implements Iterable<GeoPosition> {
     // A list with waypoints of the path
+    @Schema(description = "The list of waypoints in the path.")
     private List<GeoPosition> points;
 
     // The Graph which contains all the waypoints and connections
+    @Schema(description = "The graph which contains all the waypoints and connections.")
     private GraphStructure graphStructure;
 
     public Path(GraphStructure graph) {

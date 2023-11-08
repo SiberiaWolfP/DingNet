@@ -1,5 +1,7 @@
 package iot.networkentity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
 import iot.Environment;
 import iot.GlobalClock;
 import iot.lora.*;
@@ -21,54 +23,79 @@ public class Mote extends NetworkEntity {
     //region field
 
     // Distance in km
+    @Schema(hidden = true)
     public static final double DISTANCE_THRESHOLD_ROUNDING_ERROR = 0.001;
+
     //both in seconds
+    @Schema(hidden = true)
     private static final int DEFAULT_START_SENDING_OFFSET = 1;
+
+    @Schema(hidden = true)
     private static final int DEFAULT_PERIOD_SENDING_PACKET = 20;
+
+    @Schema(hidden = true)
     // default application identifier
     private static final long DEFAULT_APPLICATION_EUI = 1;
 
 
     // A List of MoteSensors representing all sensors on the mote.
+    @Schema(description = "The list of sensors on the mote.")
     private List<MoteSensor> moteSensors;
 
     // A path representing the connections the mote will follow.
+    @Schema(description = "The path of the mote.")
     private Path path;
 
+    // The index of the current position in the path
+    @Schema(description = "The index of the current position in the path.")
     protected int pathPositionIndex;
 
+    // The direction of mote movement along the path (1 or -1)
+    @Schema(description = "The direction of mote movement along the path (1 or -1).")
     private int direction;
 
     // An integer representing the energy level of the mote.
+    @Schema(description = "The energy level of the mote.")
     private int energyLevel;
 
     // A double representing the movement speed of the mote.
+    @Schema(description = "The movement speed of the mote.")
     private double movementSpeed;
 
     // An integer representing the start offset of the mote in seconds.
+    @Schema(hidden = true)
     private int startMovementOffset;
 
     // The last used frameCounter used when transmitting lora messages
+    @Schema(hidden = true)
     private short frameCounter;
 
     // True if the mote can receive a new packet or it has to wait to send a new one before
+    @Schema(hidden = true)
     protected boolean canReceive;
 
     //id of the trigger to send the keep alive message
+    @Schema(hidden = true)
     private long keepAliveTriggerId;
 
+    @Schema(hidden = true)
     private LoraWanPacket lastPacketSent;
 
     // time to await before send the first packet (in seconds)
+    @Schema(hidden = true)
     private int startSendingOffset;
 
     // period to define how many seconds the mote has to send a packet (in seconds)
+    @Schema(hidden = true)
     private int periodSendingPacket;
 
+    @Schema(hidden = true)
     private long applicationEUI = DEFAULT_APPLICATION_EUI;
 
+    @Schema(hidden = true)
     private ReceivedPacketStrategy receivedPacketStrategy;
 
+    @Schema(hidden = true)
     protected List<ConsumePacketStrategy> consumePacketStrategies;
 
     //endregion

@@ -1,6 +1,8 @@
 package iot.networkentity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
 import iot.Environment;
 import iot.lora.*;
 import iot.networkcommunication.api.Receiver;
@@ -27,37 +29,48 @@ import java.util.stream.Stream;
  */
 public abstract class NetworkEntity implements Serializable {
     // EUI of the network entity
+    @Schema(hidden = true)
     private static final long serialVersionUID = 1L;
 
     // An unsinged long representing the 64 bit unique identifier.
+    @Schema(description = "The 64 bit unique identifier of the network entity.")
     private final long EUI;
 
 
     // NOTE: The x and y coordinates below (in double format) are NOT geo coordinates
     //       Rather, they represent the (x,y) coordinates of the grid of the environment (specified in configuration files)
     // FIXME: adjust the simulator to completely use geographical coordinates
+    @Schema(hidden = true)
     private GeoPosition pos;
 
+    @Schema(hidden = true)
     protected GeoPosition initialPosition;
 
 
     // The transmission power of the entity.
+    @Schema(description = "The transmission power of the network entity.")
     private int transmissionPower;
 
     // The levels of power in between which it can discriminate.
+    @Schema(description = "The threshold for discriminating different transmissions.")
     private final double transmissionPowerThreshold;
 
     // If the mote is enabled in the current simulation.
+    @Schema(description = "If the network entity is enabled in the current simulation.")
     private boolean enabled;
 
+    @Schema(hidden = true)
     private final List<RegionalParameter> regionalParameters = EU868ParameterByDataRate.valuesAsList();
 
     // strategy to send a LoRa packet
+    @Schema(hidden = true)
     private Sender sender;
 
     // strategy to receive a LoRa packet
+    @Schema(hidden = true)
     private Receiver receiver;
 
+    @Schema(hidden = true)
     private Environment environment;
 
     /**

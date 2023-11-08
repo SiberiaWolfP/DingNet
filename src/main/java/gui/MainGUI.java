@@ -158,7 +158,7 @@ public class MainGUI extends JFrame implements SimulationUpdateListener, Refresh
     public MainGUI(SimulationRunner simulationRunner) {
         this.simulationRunner = simulationRunner;
         this.simulationSpeed = new MutableInteger(SettingsReader.getInstance().getBaseVisualizationSpeed());
-        initializeDefaultInputProfile();
+//        initializeDefaultInputProfile();
 
         updateInputProfiles();
         updateAdaptationGoals();
@@ -215,6 +215,7 @@ public class MainGUI extends JFrame implements SimulationUpdateListener, Refresh
                     Paths.get(Constants.PATH_CUSTOM_SETTINGS, chosenProfile + ".properties").toString()
                 );
                 DingNetCache.updateLastUsedSettingsProfile(chosenProfile + ".properties");
+                this.simulationSpeed.setValue(SettingsReader.getInstance().getBaseVisualizationSpeed() * speedSlider.getValue());
 
                 // Check if a configuration has already been loaded (i.e., an environment has been constructed)
                 if (this.simulationRunner.getEnvironment() != null) {
@@ -775,6 +776,7 @@ public class MainGUI extends JFrame implements SimulationUpdateListener, Refresh
                 selectedInputProfile = null;
             } else {
                 selectedInputProfile = inputProfile;
+                simulationRunner.updateQoS(selectedInputProfile.getQualityOfServiceProfile());
                 DingNetCache.updateLastUsedInputProfile(inputProfile.getName());
             }
             updateInputProfiles();
