@@ -6,6 +6,7 @@ import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder;
 import com.github.victools.jsonschema.generator.SchemaVersion;
 import com.github.victools.jsonschema.module.swagger2.Swagger2Module;
 import org.springframework.stereotype.Service;
+import webserver.entity.AdaptationOptions;
 import webserver.entity.Monitor;
 
 @Service
@@ -33,7 +34,7 @@ public class SchemaService {
     }
 
     public String getAdaptationOptionsSchema() {
-        return "adaptation_options_schema";
+        return generator.generateSchema(AdaptationOptions.class).toPrettyString();
     }
 
     public String getExecuteSchema() {

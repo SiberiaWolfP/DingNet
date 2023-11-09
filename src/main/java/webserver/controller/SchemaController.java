@@ -23,7 +23,7 @@ public class SchemaController {
 
     @GetMapping("/adaptation_options_schema")
     public String adaptationOptionsSchema() {
-        return "adaptation_options_schema";
+        return schemaService.getAdaptationOptionsSchema();
     }
 
     @GetMapping("/execute_schema")
