@@ -1,6 +1,9 @@
 package iot.networkentity;
 
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
 import iot.Environment;
 import iot.SimulationRunner;
 import iot.lora.LoraTransmission;
@@ -20,10 +23,23 @@ import java.util.List;
 /**
  *  A class representing a gateway in the network.
  */
+@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
+    isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+    setterVisibility = JsonAutoDetect.Visibility.NONE,
+    fieldVisibility = JsonAutoDetect.Visibility.ANY,
+    creatorVisibility = JsonAutoDetect.Visibility.NONE)
 public class Gateway extends NetworkEntity {
 
+    @Schema(hidden = true)
+    @JsonIgnore
     private List<MoteProbe> subscribedMoteProbes;
+
+    @Schema(hidden = true)
+    @JsonIgnore
     private final MqttClientBasicApi mqttClient;
+
+    @Schema(hidden = true)
+    @JsonIgnore
     private final ResponseStrategy responseStrategy;
 
     /**

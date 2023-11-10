@@ -66,82 +66,118 @@ public class ReliableEfficientDistanceGateway extends GenericFeedbackLoop {
     }
 
     public void adapt(Mote mote, Gateway dataGateway) {
-        /**
-         First we check if we have received the message already from all gateways.
-         */
-        getGatewayBuffer().add(mote, dataGateway);
-        if (getGatewayBuffer().hasReceivedAllSignals(mote)) {
-            /**
-             * Check for the signal which has travelled the shortest distance.
-             */
-            List<LoraTransmission> receivedSignals = getGatewayBuffer().getReceivedSignals(mote);
-            var env = SimulationRunner.getInstance().getEnvironment();
-            double shortestDistance = MapHelper.distance(env.getNetworkEntityById(receivedSignals.get(0).getReceiver()).getPos(),receivedSignals.get(0).getPos());
 
-            for (LoraTransmission transmission: receivedSignals) {
-                if (shortestDistance > MapHelper.distance(env.getNetworkEntityById(transmission.getReceiver()).getPos(),transmission.getPos())) {
-                    shortestDistance = MapHelper.distance(env.getNetworkEntityById(transmission.getReceiver()).getPos(),transmission.getPos());
-                }
-            }
-
-
-
-            /**
-             * If the buffer has an entry for the current mote, the new distance to the nearest gateway is added to it,
-             * else a new buffer is created and added to which we can add the distance to the nearest gateway.
-             */
-            List<Double> reliableDistanceGatewayBuffer;
-            if (!getReliableDistanceGatewayBuffers().containsKey(mote)) {
-                putReliableDistanceGatewayBuffers(mote, new LinkedList<>());
-            }
-            reliableDistanceGatewayBuffer = getReliableDistanceGatewayBuffers().get(mote);
-            reliableDistanceGatewayBuffer.add(shortestDistance);
-            putReliableDistanceGatewayBuffers(mote, reliableDistanceGatewayBuffer);
-            /**
-             * If the buffer for the mote has 4 entries, the algorithm can start making adjustments.
-             */
-            if (getReliableDistanceGatewayBuffers().get(mote).size() == 4) {
-                /**
-                 * The average is taken of the 4 entries.
-                 */
-                double average = 0;
-                for (double distance : getReliableDistanceGatewayBuffers().get(mote)) {
-                    average += distance;
-                }
-                average = average / 4 * 1000;
-
+        this.getMoteProbe().getShortestDistance(mote).ifPresent(
+            distance -> {
                 /**
                  * Depending on which interval the average is in, the power setting is adjusted.
                  */
-                if (average < 20)
+                if (distance < 20)
                     getMoteEffector().setPower(mote, 2);
-                else if (average < 45)
+                else if (distance < 45)
                     getMoteEffector().setPower(mote, 3);
-                else if (average < 70)
+                else if (distance < 70)
                     getMoteEffector().setPower(mote, 4);
-                else if (average < 95)
+                else if (distance < 95)
                     getMoteEffector().setPower(mote, 5);
-                else if (average < 120)
+                else if (distance < 120)
                     getMoteEffector().setPower(mote, 6);
-                else if (average < 145)
+                else if (distance < 145)
                     getMoteEffector().setPower(mote, 7);
-                else if (average < 170)
+                else if (distance < 170)
                     getMoteEffector().setPower(mote, 8);
-                else if (average < 195)
+                else if (distance < 195)
                     getMoteEffector().setPower(mote, 9);
-                else if (average < 220)
+                else if (distance < 220)
                     getMoteEffector().setPower(mote, 10);
-                else if (average < 245)
+                else if (distance < 245)
                     getMoteEffector().setPower(mote, 11);
-                else if (average < 270)
+                else if (distance < 270)
                     getMoteEffector().setPower(mote, 12);
-                else if (average < 295)
+                else if (distance < 295)
                     getMoteEffector().setPower(mote, 13);
                 else
                     getMoteEffector().setPower(mote, 14);
-                putReliableDistanceGatewayBuffers(mote, new LinkedList<>());
+
             }
-        }
+        );
+
+//        /**
+//         First we check if we have received the message already from all gateways.
+//         */
+//        getGatewayBuffer().add(mote, dataGateway);
+//        if (getGatewayBuffer().hasReceivedAllSignals(mote)) {
+//            /**
+//             * Check for the signal which has travelled the shortest distance.
+//             */
+//            List<LoraTransmission> receivedSignals = getGatewayBuffer().getReceivedSignals(mote);
+//            var env = SimulationRunner.getInstance().getEnvironment();
+//            double shortestDistance = MapHelper.distance(env.getNetworkEntityById(receivedSignals.get(0).getReceiver()).getPos(),receivedSignals.get(0).getPos());
+//
+//            for (LoraTransmission transmission: receivedSignals) {
+//                if (shortestDistance > MapHelper.distance(env.getNetworkEntityById(transmission.getReceiver()).getPos(),transmission.getPos())) {
+//                    shortestDistance = MapHelper.distance(env.getNetworkEntityById(transmission.getReceiver()).getPos(),transmission.getPos());
+//                }
+//            }
+//
+//
+//
+//            /**
+//             * If the buffer has an entry for the current mote, the new distance to the nearest gateway is added to it,
+//             * else a new buffer is created and added to which we can add the distance to the nearest gateway.
+//             */
+//            List<Double> reliableDistanceGatewayBuffer;
+//            if (!getReliableDistanceGatewayBuffers().containsKey(mote)) {
+//                putReliableDistanceGatewayBuffers(mote, new LinkedList<>());
+//            }
+//            reliableDistanceGatewayBuffer = getReliableDistanceGatewayBuffers().get(mote);
+//            reliableDistanceGatewayBuffer.add(shortestDistance);
+//            putReliableDistanceGatewayBuffers(mote, reliableDistanceGatewayBuffer);
+//            /**
+//             * If the buffer for the mote has 4 entries, the algorithm can start making adjustments.
+//             */
+//            if (getReliableDistanceGatewayBuffers().get(mote).size() == 4) {
+//                /**
+//                 * The average is taken of the 4 entries.
+//                 */
+//                double average = 0;
+//                for (double distance : getReliableDistanceGatewayBuffers().get(mote)) {
+//                    average += distance;
+//                }
+//                average = average / 4 * 1000;
+//
+//                /**
+//                 * Depending on which interval the average is in, the power setting is adjusted.
+//                 */
+//                if (average < 20)
+//                    getMoteEffector().setPower(mote, 2);
+//                else if (average < 45)
+//                    getMoteEffector().setPower(mote, 3);
+//                else if (average < 70)
+//                    getMoteEffector().setPower(mote, 4);
+//                else if (average < 95)
+//                    getMoteEffector().setPower(mote, 5);
+//                else if (average < 120)
+//                    getMoteEffector().setPower(mote, 6);
+//                else if (average < 145)
+//                    getMoteEffector().setPower(mote, 7);
+//                else if (average < 170)
+//                    getMoteEffector().setPower(mote, 8);
+//                else if (average < 195)
+//                    getMoteEffector().setPower(mote, 9);
+//                else if (average < 220)
+//                    getMoteEffector().setPower(mote, 10);
+//                else if (average < 245)
+//                    getMoteEffector().setPower(mote, 11);
+//                else if (average < 270)
+//                    getMoteEffector().setPower(mote, 12);
+//                else if (average < 295)
+//                    getMoteEffector().setPower(mote, 13);
+//                else
+//                    getMoteEffector().setPower(mote, 14);
+//                putReliableDistanceGatewayBuffers(mote, new LinkedList<>());
+//            }
+//        }
     }
 
 }

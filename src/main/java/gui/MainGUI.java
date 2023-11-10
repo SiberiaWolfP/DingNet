@@ -777,6 +777,10 @@ public class MainGUI extends JFrame implements SimulationUpdateListener, Refresh
             } else {
                 selectedInputProfile = inputProfile;
                 simulationRunner.updateQoS(selectedInputProfile.getQualityOfServiceProfile());
+                simulationRunner.getInputProfiles().forEach(p -> {
+                    String name = p.getQualityOfServiceProfile().getNames().iterator().next();
+                    p.getQualityOfServiceProfile().getAdaptationGoal(name).setEnabled(p.equals(selectedInputProfile));
+                });
                 DingNetCache.updateLastUsedInputProfile(inputProfile.getName());
             }
             updateInputProfiles();

@@ -93,64 +93,83 @@ public class SignalBasedAdaptation extends GenericFeedbackLoop {
 
     @Override
     public void adapt(Mote mote, Gateway gateway) {
-        /**
-         First we check if we have received the message already from all gateways.
-         */
-        getGatewayBuffer().add(mote, gateway);
-        if (getGatewayBuffer().hasReceivedAllSignals(mote)) {
-            /**
-             * check what is the highest received signal strength.
-             */
 
-            List<LoraTransmission> receivedSignals = getGatewayBuffer().getReceivedSignals(mote);
-
-            double receivedPower = receivedSignals.get(0).getTransmissionPower();
-
-            for (LoraTransmission transmission : receivedSignals) {
-                if (receivedPower < transmission.getTransmissionPower()) {
-                    receivedPower = transmission.getTransmissionPower();
-                }
-            }
-
-            /**
-             * If the buffer has an entry for the current mote, the new highest received signal strength is added to it,
-             * else a new buffer is created and added to which we can add the signal strength.
-             */
-            List<Double> reliableMinPowerBuffer = new LinkedList<>();
-            if (getReliableMinPowerBuffers().containsKey(mote)) {
-                reliableMinPowerBuffer = getReliableMinPowerBuffers().get(mote);
-            }
-            reliableMinPowerBuffer.add(receivedPower);
-            putReliableMinPowerBuffer(mote, reliableMinPowerBuffer);
-            /**
-             * If the buffer for the mote has 5 entries, the algorithm can start making adjustments.
-             */
-            if (getReliableMinPowerBuffers().get(mote).size() == 5) {
+        this.getMoteProbe().getHighestPower(mote).ifPresent(
+            power -> {
                 /**
-                 * The average is taken of the 5 entries.
-                 */
-                double average = getReliableMinPowerBuffers().get(mote).stream()
-                    .mapToDouble(o -> o)
-                    .average()
-                    .orElse(0L);
-
-                /**
-                 * If the average of the signal strengths is higher than the upper bound, the transmitting power is decreased by 1;
-                 */
-                if (average > getUpperBound() && getMoteProbe().getPowerSetting(mote) > -3) {
+                * If the average of the signal strengths is higher than the upper bound, the transmitting power is decreased by 1;
+                */
+                if (power > getUpperBound() && getMoteProbe().getPowerSetting(mote) > -3) {
                     getMoteEffector().setPower(mote, getMoteProbe().getPowerSetting(mote) - 1);
                 }
 
                 /**
                  * If the average of the signal strengths is lower than the lower bound, the transmitting power is increased by 1;
                  */
-                if (average < getLowerBound() && getMoteProbe().getPowerSetting(mote) < 14) {
+                if (power < getLowerBound() && getMoteProbe().getPowerSetting(mote) < 14) {
                     getMoteEffector().setPower(mote, getMoteProbe().getPowerSetting(mote) + 1);
                 }
-
-                putReliableMinPowerBuffer(mote, new LinkedList<>());
             }
-        }
+        );
+
+//        /**
+//         First we check if we have received the message already from all gateways.
+//         */
+//        getGatewayBuffer().add(mote, gateway);
+//        if (getGatewayBuffer().hasReceivedAllSignals(mote)) {
+//            /**
+//             * check what is the highest received signal strength.
+//             */
+//
+//            List<LoraTransmission> receivedSignals = getGatewayBuffer().getReceivedSignals(mote);
+//
+//            double receivedPower = receivedSignals.get(0).getTransmissionPower();
+//
+//            for (LoraTransmission transmission : receivedSignals) {
+//                if (receivedPower < transmission.getTransmissionPower()) {
+//                    receivedPower = transmission.getTransmissionPower();
+//                }
+//            }
+//
+//            /**
+//             * If the buffer has an entry for the current mote, the new highest received signal strength is added to it,
+//             * else a new buffer is created and added to which we can add the signal strength.
+//             */
+//            List<Double> reliableMinPowerBuffer = new LinkedList<>();
+//            if (getReliableMinPowerBuffers().containsKey(mote)) {
+//                reliableMinPowerBuffer = getReliableMinPowerBuffers().get(mote);
+//            }
+//            reliableMinPowerBuffer.add(receivedPower);
+//            putReliableMinPowerBuffer(mote, reliableMinPowerBuffer);
+//            /**
+//             * If the buffer for the mote has 5 entries, the algorithm can start making adjustments.
+//             */
+//            if (getReliableMinPowerBuffers().get(mote).size() == 5) {
+//                /**
+//                 * The average is taken of the 5 entries.
+//                 */
+//                double average = getReliableMinPowerBuffers().get(mote).stream()
+//                    .mapToDouble(o -> o)
+//                    .average()
+//                    .orElse(0L);
+//
+//                /**
+//                 * If the average of the signal strengths is higher than the upper bound, the transmitting power is decreased by 1;
+//                 */
+//                if (average > getUpperBound() && getMoteProbe().getPowerSetting(mote) > -3) {
+//                    getMoteEffector().setPower(mote, getMoteProbe().getPowerSetting(mote) - 1);
+//                }
+//
+//                /**
+//                 * If the average of the signal strengths is lower than the lower bound, the transmitting power is increased by 1;
+//                 */
+//                if (average < getLowerBound() && getMoteProbe().getPowerSetting(mote) < 14) {
+//                    getMoteEffector().setPower(mote, getMoteProbe().getPowerSetting(mote) + 1);
+//                }
+//
+//                putReliableMinPowerBuffer(mote, new LinkedList<>());
+//            }
+//        }
     }
 
 }

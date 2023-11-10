@@ -49,5 +49,12 @@ public class MoteEffector {
         mote.setEnergyLevel(energyLevel);
     }
 
+    public void setDistance(Mote mote, double distance) {
+        mote.setShortestDistanceToGateway(distance);
+    }
+
+    public void setSignalPower(Mote mote, double power) {
+        mote.setHighestSignalPower(power);
+    }
 
 }

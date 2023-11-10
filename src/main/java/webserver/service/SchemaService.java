@@ -6,8 +6,8 @@ import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder;
 import com.github.victools.jsonschema.generator.SchemaVersion;
 import com.github.victools.jsonschema.module.swagger2.Swagger2Module;
 import org.springframework.stereotype.Service;
-import webserver.entity.AdaptationOptions;
-import webserver.entity.Monitor;
+import webserver.DTO.AdaptationOptionsDTO;
+import webserver.DTO.MonitorDTO;
 
 @Service
 public class SchemaService {
@@ -30,11 +30,11 @@ public class SchemaService {
     }
 
     public String getMonitorSchema() {
-        return generator.generateSchema(Monitor.class).toPrettyString();
+        return generator.generateSchema(MonitorDTO.class).toPrettyString();
     }
 
     public String getAdaptationOptionsSchema() {
-        return generator.generateSchema(AdaptationOptions.class).toPrettyString();
+        return generator.generateSchema(AdaptationOptionsDTO.class).toPrettyString();
     }
 
     public String getExecuteSchema() {

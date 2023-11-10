@@ -1,14 +1,17 @@
 package iot.networkentity;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import iot.Environment;
 import iot.GlobalClock;
+import iot.SimulationRunner;
 import iot.lora.*;
 import iot.strategy.consume.ConsumePacketStrategy;
 import iot.strategy.store.MaintainLastPacket;
 import iot.strategy.store.ReceivedPacketStrategy;
 import org.jxmapviewer.viewer.GeoPosition;
+import selfadaptation.instrumentation.FeedbackLoopGatewayBuffer;
 import util.MapHelper;
 import util.Path;
 
@@ -18,22 +21,31 @@ import java.util.*;
 /**
  * A class representing the energy bound and moving motes in the network.
  */
+@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
+    isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+    setterVisibility = JsonAutoDetect.Visibility.NONE,
+    fieldVisibility = JsonAutoDetect.Visibility.ANY,
+    creatorVisibility = JsonAutoDetect.Visibility.NONE)
 public class Mote extends NetworkEntity {
 
     //region field
 
     // Distance in km
     @Schema(hidden = true)
+    @JsonIgnore
     public static final double DISTANCE_THRESHOLD_ROUNDING_ERROR = 0.001;
 
     //both in seconds
     @Schema(hidden = true)
+    @JsonIgnore
     private static final int DEFAULT_START_SENDING_OFFSET = 1;
 
     @Schema(hidden = true)
+    @JsonIgnore
     private static final int DEFAULT_PERIOD_SENDING_PACKET = 20;
 
     @Schema(hidden = true)
+    @JsonIgnore
     // default application identifier
     private static final long DEFAULT_APPLICATION_EUI = 1;
 
@@ -43,15 +55,18 @@ public class Mote extends NetworkEntity {
     private List<MoteSensor> moteSensors;
 
     // A path representing the connections the mote will follow.
-    @Schema(description = "The path of the mote.")
+    @Schema(hidden = true)
+    @JsonIgnore
     private Path path;
 
     // The index of the current position in the path
-    @Schema(description = "The index of the current position in the path.")
+    @Schema(hidden = true)
+    @JsonIgnore
     protected int pathPositionIndex;
 
     // The direction of mote movement along the path (1 or -1)
-    @Schema(description = "The direction of mote movement along the path (1 or -1).")
+    @Schema(hidden = true)
+    @JsonIgnore
     private int direction;
 
     // An integer representing the energy level of the mote.
@@ -64,39 +79,57 @@ public class Mote extends NetworkEntity {
 
     // An integer representing the start offset of the mote in seconds.
     @Schema(hidden = true)
+    @JsonIgnore
     private int startMovementOffset;
 
     // The last used frameCounter used when transmitting lora messages
     @Schema(hidden = true)
+    @JsonIgnore
     private short frameCounter;
 
     // True if the mote can receive a new packet or it has to wait to send a new one before
     @Schema(hidden = true)
+    @JsonIgnore
     protected boolean canReceive;
 
     //id of the trigger to send the keep alive message
     @Schema(hidden = true)
+    @JsonIgnore
     private long keepAliveTriggerId;
 
     @Schema(hidden = true)
+    @JsonIgnore
     private LoraWanPacket lastPacketSent;
 
     // time to await before send the first packet (in seconds)
     @Schema(hidden = true)
+    @JsonIgnore
     private int startSendingOffset;
 
     // period to define how many seconds the mote has to send a packet (in seconds)
     @Schema(hidden = true)
+    @JsonIgnore
     private int periodSendingPacket;
 
     @Schema(hidden = true)
+    @JsonIgnore
     private long applicationEUI = DEFAULT_APPLICATION_EUI;
 
     @Schema(hidden = true)
+    @JsonIgnore
     private ReceivedPacketStrategy receivedPacketStrategy;
 
     @Schema(hidden = true)
+    @JsonIgnore
     protected List<ConsumePacketStrategy> consumePacketStrategies;
+
+    // The distance to the nearest gateway
+    @Schema(description = "The distance to the nearest gateway.")
+    private double shortestDistanceToGateway = Double.MAX_VALUE;
+
+    // The highest signal power a gateway has received from this mote
+    @Schema(description = "The highest signal power a gateway has received from this mote")
+    private double highestSignalPower = Double.MIN_VALUE;
 
     //endregion
 
@@ -452,5 +485,21 @@ public class Mote extends NetworkEntity {
         }
         //noinspection OptionalGetWithoutIsPresent(if the path is not empty the destination is present)
         return getNextPathPoint().isEmpty();
+    }
+
+    public void setShortestDistanceToGateway(double shortestDistanceToGateway) {
+        this.shortestDistanceToGateway = shortestDistanceToGateway;
+    }
+
+    public double getShortestDistanceToGateway() {
+        return shortestDistanceToGateway;
+    }
+
+    public void setHighestSignalPower(double highestSignalPower) {
+        this.highestSignalPower = highestSignalPower;
+    }
+
+    public double getHighestSignalPower() {
+        return highestSignalPower;
     }
 }

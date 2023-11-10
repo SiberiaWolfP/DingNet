@@ -1,6 +1,7 @@
 package iot.networkentity;
 
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import iot.Environment;
@@ -27,9 +28,15 @@ import java.util.stream.Stream;
 /**
  * An  abstract class representing an entity active in the LoraWan network
  */
+@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
+    isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+    setterVisibility = JsonAutoDetect.Visibility.NONE,
+    fieldVisibility = JsonAutoDetect.Visibility.ANY,
+    creatorVisibility = JsonAutoDetect.Visibility.NONE)
 public abstract class NetworkEntity implements Serializable {
     // EUI of the network entity
     @Schema(hidden = true)
+    @JsonIgnore
     private static final long serialVersionUID = 1L;
 
     // An unsinged long representing the 64 bit unique identifier.
@@ -40,10 +47,11 @@ public abstract class NetworkEntity implements Serializable {
     // NOTE: The x and y coordinates below (in double format) are NOT geo coordinates
     //       Rather, they represent the (x,y) coordinates of the grid of the environment (specified in configuration files)
     // FIXME: adjust the simulator to completely use geographical coordinates
-    @Schema(hidden = true)
+    @Schema(description = "The position of the network entity.")
     private GeoPosition pos;
 
     @Schema(hidden = true)
+    @JsonIgnore
     protected GeoPosition initialPosition;
 
 
@@ -52,7 +60,7 @@ public abstract class NetworkEntity implements Serializable {
     private int transmissionPower;
 
     // The levels of power in between which it can discriminate.
-    @Schema(description = "The threshold for discriminating different transmissions.")
+    @Schema(description = "The levels of power in between which it can discriminate.")
     private final double transmissionPowerThreshold;
 
     // If the mote is enabled in the current simulation.
@@ -60,17 +68,21 @@ public abstract class NetworkEntity implements Serializable {
     private boolean enabled;
 
     @Schema(hidden = true)
+    @JsonIgnore
     private final List<RegionalParameter> regionalParameters = EU868ParameterByDataRate.valuesAsList();
 
     // strategy to send a LoRa packet
     @Schema(hidden = true)
+    @JsonIgnore
     private Sender sender;
 
     // strategy to receive a LoRa packet
     @Schema(hidden = true)
+    @JsonIgnore
     private Receiver receiver;
 
     @Schema(hidden = true)
+    @JsonIgnore
     private Environment environment;
 
     /**
