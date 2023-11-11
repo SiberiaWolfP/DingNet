@@ -11,6 +11,10 @@ import iot.mqtt.MQTTClientFactory;
 import iot.networkentity.Gateway;
 import iot.networkentity.Mote;
 import iot.networkentity.NetworkServer;
+import lombok.Data;
+import lombok.Generated;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import selfadaptation.adaptationgoals.IntervalAdaptationGoal;
 import selfadaptation.adaptationgoals.ThresholdAdaptationGoal;
@@ -34,13 +38,10 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class SimulationRunner {
-    @JsonIgnore
     private static SimulationRunner instance = null;
 
-    @JsonIgnore
     private List<InputProfile> inputProfiles;
 
-    @JsonIgnore
     private List<GenericFeedbackLoop> algorithms;
     private QualityOfService QoS;
 
@@ -53,6 +54,14 @@ public class SimulationRunner {
     private PollutionMonitor pollutionMonitor;
     private NetworkServer networkServer;
 
+    public enum SimulationStatus {
+        NOT_STARTED,
+        RUNNING,
+        STOPPED
+    }
+    @Getter
+    @Setter
+    private SimulationStatus simulationStatus = SimulationStatus.NOT_STARTED;
 
 
     public static SimulationRunner getInstance() {
@@ -190,6 +199,7 @@ public class SimulationRunner {
      * Setup of applications/servers/clients before each run.
      */
     private void setupSimulationRunner() {
+        simulationStatus = SimulationStatus.RUNNING;
         // Remove previous pollution measurements
         pollutionGrid.clean();
         routingApplication.clean();
@@ -208,6 +218,9 @@ public class SimulationRunner {
      * @return True if the simulation has finished.
      */
     private boolean isSimulationFinished() {
+        if (simulation.isFinished()) {
+            simulationStatus = SimulationStatus.STOPPED;
+        }
         return simulation.isFinished();
     }
 

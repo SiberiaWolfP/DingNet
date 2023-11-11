@@ -1,5 +1,7 @@
 package selfadaptation.adaptationgoals;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * An adaptation goal with a threshold.
  */
@@ -7,6 +9,7 @@ public class ThresholdAdaptationGoal extends AdaptationGoal {
     /**
      * The threshold of the goal.
      */
+    @Schema(description = "The threshold of the goal.")
     private final double threshold;
 
     /**

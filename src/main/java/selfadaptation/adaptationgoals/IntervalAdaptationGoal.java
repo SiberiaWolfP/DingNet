@@ -1,6 +1,8 @@
 package selfadaptation.adaptationgoals;
 
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * An adaptation goal with a lower and upper value.
  */
@@ -9,11 +11,13 @@ public class IntervalAdaptationGoal extends AdaptationGoal {
     /**
      * A double representing the lower value of the goal
      */
+    @Schema(description = "A double representing the lower value of the goal")
     private final double lowerBoundary;
 
     /**
      * A double representing the upper value of the goal
      */
+    @Schema(description = "A double representing the upper value of the goal")
     private final double upperBoundary;
 
     /**

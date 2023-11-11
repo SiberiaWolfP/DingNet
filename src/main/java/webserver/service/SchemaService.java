@@ -7,6 +7,7 @@ import com.github.victools.jsonschema.generator.SchemaVersion;
 import com.github.victools.jsonschema.module.swagger2.Swagger2Module;
 import org.springframework.stereotype.Service;
 import webserver.DTO.AdaptationOptionsDTO;
+import webserver.DTO.ExecuteDTO;
 import webserver.DTO.MonitorDTO;
 
 @Service
@@ -38,6 +39,6 @@ public class SchemaService {
     }
 
     public String getExecuteSchema() {
-        return "execute_schema";
+        return generator.generateSchema(ExecuteDTO.class).toPrettyString();
     }
 }

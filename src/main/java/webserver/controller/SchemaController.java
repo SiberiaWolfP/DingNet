@@ -28,6 +28,6 @@ public class SchemaController {
 
     @GetMapping("/execute_schema")
     public String executeSchema() {
-        return "execute_schema";
+        return schemaService.getExecuteSchema();
     }
 }

@@ -49,6 +49,11 @@ public class MoteEffector {
         mote.setEnergyLevel(energyLevel);
     }
 
+    /**
+     * Attention: this method only used after the distance was calculated automatically.
+     * @param mote The mote to set the distance of.
+     * @param distance The distance to set.
+     */
     public void setDistance(Mote mote, double distance) {
         mote.setShortestDistanceToGateway(distance);
     }
