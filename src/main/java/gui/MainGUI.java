@@ -151,6 +151,43 @@ public class MainGUI extends JFrame implements SimulationUpdateListener, Refresh
             if (SettingsReader.getInstance().shouldStartFullScreen()) {
                 frame.setExtendedState(Frame.MAXIMIZED_BOTH);
             }
+
+            // Load configuration
+            String projectPath = System.getProperty("user.dir");
+            String configPath = projectPath + "/settings/configurations/";
+
+            gui.simulationRunner.loadConfigurationFromFile(new File(configPath + args[0]));
+            gui.updateEntries(simulationRunner.getEnvironment());
+            gui.loadMap(false);
+
+            // Choose name of algorithm (No Adaptation, Signal-based, Distance-based)
+
+//            var algorithms = gui.simulationRunner.getAlgorithms();
+//            for (GenericFeedbackLoop algorithm : algorithms) {
+//                if (algorithm.getName().equals(profile_name)) {
+//                    gui.selectedInputProfile = inputProfile;
+//                }
+//            }
+            String chosenOption = args[1];
+            gui.simulationRunner.setApproach(chosenOption);
+
+            //Select inputprofile (ReliableEfficient, ReliableEfficientOpen)
+            String profile_name = args[2];
+            for (InputProfile inputProfile : gui.simulationRunner.getInputProfiles()){
+                if (inputProfile.getName().equals(profile_name)) {
+                    gui.selectedInputProfile = inputProfile;
+                }
+            }
+            DingNetCache.updateLastUsedInputProfile(gui.selectedInputProfile.getName());
+            gui.updateInputProfiles();
+            gui.updateAdaptationGoals();
+
+            //Set speed
+            int speedvalue = Integer.parseInt(args[3]);
+            gui.simulationSpeed.setValue(SettingsReader.getInstance().getBaseVisualizationSpeed() * speedvalue);
+
+            // Single Run
+            gui.doRun((RunMode.Single));
         });
     }
 
