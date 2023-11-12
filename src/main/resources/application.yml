@@ -1,1 +1,14 @@
+server:
+    port: 8080
 
+springdoc:
+    api-docs:
+        enabled: true
+        version: openapi_3_1
+    swagger-ui:
+        enabled: true
+        path: /swagger-ui.html
+    cache:
+        disabled: true
+    auto-tag-classes: false
+    default-flat-param-object: true
