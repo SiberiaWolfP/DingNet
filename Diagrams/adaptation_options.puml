@@ -1,0 +1,12 @@
+@startuml
+skinparam sequenceMessageAlign center
+
+Client -> MonitorController : /adaptation_options
+activate MonitorController
+MonitorController -> AdaptationOptionsService : getAdaptationOptions()
+activate AdaptationOptionsService
+AdaptationOptionsService -> AdaptationOptionsService : new AdaptationOptionsDTO()
+return AdaptationOptionsDTO
+return Json
+
+@enduml

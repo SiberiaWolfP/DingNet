@@ -22,12 +22,8 @@ public class ExecuteService {
 
     public boolean executeAdaptation(ExecuteDTO executeDTO) {
         SimulationRunner simulationRunner = SimulationRunner.getInstance();
-        List<String> adaptationApproaches = new ArrayList<>(){{
-            add("No Adaptation");
-            add("Signal-based");
-            add("Distance-based");
-        }};
-        if (adaptationApproaches.contains(executeDTO.getAdaptationApproaches())) {
+
+        if (checkAdaptationApproaches(executeDTO.getAdaptationApproaches())) {
             simulationRunner.setApproach(executeDTO.getAdaptationApproaches());
         } else {
             return false;
@@ -48,7 +44,9 @@ public class ExecuteService {
                     .filter(mote -> mote.getEUI() == moteOptions.getEUI())
                     .findFirst()
                     .orElse(null);
-                assert mathedMote != null;
+                if (mathedMote == null) {
+                    return false;
+                }
                 simulationRunner.getSimulation().getApproach().getMoteEffector().setPower(mathedMote, moteOptions.getTransmissionPower());
             } else {
                 return false;
@@ -56,6 +54,15 @@ public class ExecuteService {
         }
 
         return true;
+    }
+
+    private boolean checkAdaptationApproaches(String adaptationApproaches) {
+        List<String> adaptationApproachesList = new ArrayList<>(){{
+            add("No Adaptation");
+            add("Signal-based");
+            add("Distance-based");
+        }};
+        return adaptationApproachesList.contains(adaptationApproaches);
     }
 
     private boolean checkAdaptationGoal(QoSOptionsDTO adaptationGoal) {

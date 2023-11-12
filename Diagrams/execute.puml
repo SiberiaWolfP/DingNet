@@ -1,0 +1,48 @@
+@startuml
+skinparam sequenceMessageAlign center
+'autoactivate on
+
+
+Client -> ExecuteController: /execute \n ExecuteDTO
+activate ExecuteController
+create ExecuteDTO
+ExecuteController -> ExecuteDTO: parse and new
+activate ExecuteDTO
+
+ExecuteController -> ExecuteService: executeAdaptation\n(executeDTO)
+activate ExecuteService
+ExecuteService -> ExecuteDTO: getAdaptationApproaches()
+ExecuteDTO --> ExecuteService: adaptationApproaches
+ExecuteService -> ExecuteService: checkAdaptationApproaches(...)
+
+alt all options valid
+    ExecuteService -> SimulationRunner: setApproach(...)
+    ExecuteService -> ExecuteDTO: getAdaptationGoals()
+    ExecuteDTO --> ExecuteService: adaptationGoals
+    ExecuteService -> ExecuteService: checkAdaptationGoal(...)
+    ExecuteService -> SimulationRunner: updateQoS(...)
+    loop for all MoteOptions
+    ExecuteService -> ExecuteDTO: getMoteOptions()
+    ExecuteDTO --> ExecuteService: moteOptions
+    ExecuteService -> ExecuteService: checkMoteOptions(...)
+    ExecuteService -> SimulationRunner: getEnvironment()
+    SimulationRunner -> Environment: getMotes()
+    Environment --> SimulationRunner: motes
+    SimulationRunner --> ExecuteService: motes
+    ExecuteService -> ExecuteService: findMote(...)
+    ExecuteService -> MoteEffector: setPower(...)
+    end
+    ExecuteService --> ExecuteController: true
+    deactivate ExecuteService
+    deactivate ExecuteDTO
+    ExecuteController -> Client: Adaptation executed
+
+else any option invalid
+    activate ExecuteService
+    ExecuteService -> ExecuteController: false
+    ExecuteController -> Client: Invalid input
+    deactivate ExecuteController
+    deactivate ExecuteService
+end
+
+@enduml

@@ -1,0 +1,31 @@
+@startuml
+skinparam sequenceMessageAlign center
+autoactivate on
+
+Client -> MonitorController : /monitor
+MonitorController -> MonitorService : collectMonitorData()
+MonitorService -> SimulationRunner : getSimulationStatus()
+return status
+MonitorService -> SimulationRunner : getEnvironment()
+SimulationRunner -> Environment : getMotes()
+return motes
+SimulationRunner --> MonitorService : motes
+MonitorService -> SimulationRunner : getEnvironment()
+SimulationRunner -> Environment : getGateways()
+return gateways
+return gateways
+
+loop for all QoS
+MonitorService -> SimulationRunner : getQoS()
+return qos
+end
+
+loop for all Algorithms
+MonitorService -> SimulationRunner : getAlgorithms()
+return algorithm
+end
+
+return MonitorDTO
+return Json
+
+@enduml
