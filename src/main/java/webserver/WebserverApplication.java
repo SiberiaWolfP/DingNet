@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 public class WebserverApplication {
 
 	public static void main(String[] args) {
-		args= new String[]{"basic_graph.xml", "No Adaptation", "ReliableEfficient", "5"};
+//		args= new String[]{"basic_graph.xml", "No Adaptation", "ReliableEfficient", "5"};
         MainGUI.AppMain(args);
 		SpringApplication.run(WebserverApplication.class, args);
 	}
