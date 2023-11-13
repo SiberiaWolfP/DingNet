@@ -12,3 +12,4 @@ springdoc:
         disabled: true
     auto-tag-classes: false
     default-flat-param-object: true
+

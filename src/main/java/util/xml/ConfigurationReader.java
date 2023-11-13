@@ -111,7 +111,7 @@ public class ConfigurationReader {
                     ));
                 }
             }
-
+            System.out.println("test");
             simulationRunner.setEnvironment(new Environment(characteristicsMap, mapOrigin, numberOfZones,
                 idRemapping.getWayPoints(), idRemapping.getConnections()));
 
