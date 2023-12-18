@@ -58,8 +58,16 @@ public class MoteEffector {
         mote.setShortestDistanceToGateway(distance);
     }
 
+    public void setBestGatewayEUI(Mote mote, long gatewayEUI) {
+        mote.setBestGatewayEUI(gatewayEUI);
+    }
+
     public void setSignalPower(Mote mote, double power) {
         mote.setHighestSignalPower(power);
+    }
+
+    public void setBestGatewayDistance(Mote mote, double distance) {
+        mote.setBestGatewayDistance(distance);
     }
 
 }

@@ -12,7 +12,7 @@ public class MoteOptionsDTO {
     private long EUI;
 
     @Schema(description = "The mote's transmission power.")
-    private int transmissionPower;
+    private double transmissionPower;
 
     public long getEUI() {
         return EUI;

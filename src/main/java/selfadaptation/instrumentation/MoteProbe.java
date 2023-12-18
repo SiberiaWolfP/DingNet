@@ -108,69 +108,80 @@ public class MoteProbe {
                 }
             }
 
-            /**
-             * If the buffer has an entry for the current mote, the new distance to the nearest gateway is added to it,
-             * else a new buffer is created and added to which we can add the distance to the nearest gateway.
-             */
-            List<Double> reliableDistanceGatewayBuffer;
-            if (!reliableDistanceGatewayBuffers.containsKey(mote)) {
-                reliableDistanceGatewayBuffers.put(mote, new LinkedList<>());
-            }
-            reliableDistanceGatewayBuffer = reliableDistanceGatewayBuffers.get(mote);
-            reliableDistanceGatewayBuffer.add(shortestDistance);
-            reliableDistanceGatewayBuffers.put(mote, reliableDistanceGatewayBuffer);
-            /**
-             * If the buffer for the mote has 4 entries, the algorithm can start making adjustments.
-             */
-            if (reliableDistanceGatewayBuffers.get(mote).size() == 4) {
-                /**
-                 * The average is taken of the 4 entries.
-                 */
-                double average = 0;
-                for (double distance : reliableDistanceGatewayBuffers.get(mote)) {
-                    average += distance;
-                }
-                average = average / 4 * 1000;
+            this.genericFeedbackLoop.getMoteEffector().setDistance(mote, shortestDistance * 1000);
 
-                this.genericFeedbackLoop.getMoteEffector().setDistance(mote, average);
-                reliableDistanceGatewayBuffers.put(mote, new LinkedList<>());
-                available = true;
-            }
+//            /**
+//             * If the buffer has an entry for the current mote, the new distance to the nearest gateway is added to it,
+//             * else a new buffer is created and added to which we can add the distance to the nearest gateway.
+//             */
+//            List<Double> reliableDistanceGatewayBuffer;
+//            if (!reliableDistanceGatewayBuffers.containsKey(mote)) {
+//                reliableDistanceGatewayBuffers.put(mote, new LinkedList<>());
+//            }
+//            reliableDistanceGatewayBuffer = reliableDistanceGatewayBuffers.get(mote);
+//            reliableDistanceGatewayBuffer.add(shortestDistance);
+//            reliableDistanceGatewayBuffers.put(mote, reliableDistanceGatewayBuffer);
+//            /**
+//             * If the buffer for the mote has 4 entries, the algorithm can start making adjustments.
+//             */
+//            if (reliableDistanceGatewayBuffers.get(mote).size() == 4) {
+//                /**
+//                 * The average is taken of the 4 entries.
+//                 */
+//                double average = 0;
+//                for (double distance : reliableDistanceGatewayBuffers.get(mote)) {
+//                    average += distance;
+//                }
+//                average = average / 4 * 1000;
+//
+//                this.genericFeedbackLoop.getMoteEffector().setDistance(mote, average);
+//
+//                reliableDistanceGatewayBuffers.put(mote, new LinkedList<>());
+//                available = true;
+//            }
 
             double receivedPower = receivedSignals.get(0).getTransmissionPower();
+            long bestGatewayEUI = receivedSignals.get(0).getReceiver();
 
             for (LoraTransmission transmission : receivedSignals) {
                 if (receivedPower < transmission.getTransmissionPower()) {
                     receivedPower = transmission.getTransmissionPower();
+                    bestGatewayEUI = transmission.getReceiver();
                 }
             }
 
-            /**
-             * If the buffer has an entry for the current mote, the new highest received signal strength is added to it,
-             * else a new buffer is created and added to which we can add the signal strength.
-             */
-            List<Double> reliableMinPowerBuffer = new LinkedList<>();
-            if (reliableMinPowerBuffers.containsKey(mote)) {
-                reliableMinPowerBuffer = reliableMinPowerBuffers.get(mote);
-            }
-            reliableMinPowerBuffer.add(receivedPower);
-            reliableMinPowerBuffers.put(mote, reliableMinPowerBuffer);
-            /**
-             * If the buffer for the mote has 5 entries, the algorithm can start making adjustments.
-             */
-            if (reliableMinPowerBuffers.get(mote).size() == 4) {
-                /**
-                 * The average is taken of the 5 entries.
-                 */
-                double average = reliableMinPowerBuffers.get(mote).stream()
-                    .mapToDouble(o -> o)
-                    .average()
-                    .orElse(0L);
+            double distanceToBestGateway = MapHelper.distance(env.getNetworkEntityById(bestGatewayEUI).getPos(), receivedSignals.get(0).getPos());
 
-                this.genericFeedbackLoop.getMoteEffector().setSignalPower(mote, average);
-                reliableMinPowerBuffers.put(mote, new LinkedList<>());
-                available = true;
-            }
+            this.genericFeedbackLoop.getMoteEffector().setSignalPower(mote, receivedPower);
+            this.genericFeedbackLoop.getMoteEffector().setBestGatewayEUI(mote, bestGatewayEUI);
+            this.genericFeedbackLoop.getMoteEffector().setBestGatewayDistance(mote, distanceToBestGateway * 1000);
+
+//            /**
+//             * If the buffer has an entry for the current mote, the new highest received signal strength is added to it,
+//             * else a new buffer is created and added to which we can add the signal strength.
+//             */
+//            List<Double> reliableMinPowerBuffer = new LinkedList<>();
+//            if (reliableMinPowerBuffers.containsKey(mote)) {
+//                reliableMinPowerBuffer = reliableMinPowerBuffers.get(mote);
+//            }
+//            reliableMinPowerBuffer.add(receivedPower);
+//            reliableMinPowerBuffers.put(mote, reliableMinPowerBuffer);
+//            /**
+//             * If the buffer for the mote has 5 entries, the algorithm can start making adjustments.
+//             */
+//            if (reliableMinPowerBuffers.get(mote).size() == 4) {
+//                /**
+//                 * The average is taken of the 5 entries.
+//                 */
+//                double average = reliableMinPowerBuffers.get(mote).stream()
+//                    .mapToDouble(o -> o)
+//                    .average()
+//                    .orElse(0L);
+//
+//                this.genericFeedbackLoop.getMoteEffector().setSignalPower(mote, average);
+//                reliableMinPowerBuffers.put(mote, new LinkedList<>());
+//                available = true;
+//            }
         }
         return available;
     }

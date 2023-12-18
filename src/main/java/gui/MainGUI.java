@@ -45,6 +45,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 public class MainGUI extends JFrame implements SimulationUpdateListener, Refreshable {
+    private static MainGUI instance = null;
+
     private JPanel map;
     private JPanel console;
     private JPanel mainPanel;
@@ -52,7 +54,7 @@ public class MainGUI extends JFrame implements SimulationUpdateListener, Refresh
     private JToolBar toolBarAdaptation;
     private JTabbedPane tabbedPaneGraphs;
     private JButton openConfigurationButton;
-    private JButton configureButton;
+    public JButton configureButton;
     private JButton helpButton;
     private JButton aboutButton;
     private JButton simulationSaveButton;
@@ -125,6 +127,17 @@ public class MainGUI extends JFrame implements SimulationUpdateListener, Refresh
     private int averageLatency;
 
 
+
+    public static MainGUI getInstance() {
+        if (instance == null) {
+            SimulationRunner simulationRunner = SimulationRunner.getInstance();
+            instance = new MainGUI(simulationRunner);
+        }
+
+        return instance;
+    }
+
+
     public static void AppMain(String[] args) {
         SimulationRunner simulationRunner = SimulationRunner.getInstance();
 
@@ -138,7 +151,8 @@ public class MainGUI extends JFrame implements SimulationUpdateListener, Refresh
             }
 
             JFrame frame = new JFrame("Dynamic DingNet simulator");
-            MainGUI gui = new MainGUI(simulationRunner);
+//            MainGUI gui = new MainGUI(simulationRunner);
+            MainGUI gui = MainGUI.getInstance();
             frame.setContentPane(gui.mainPanel);
 
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -156,38 +170,40 @@ public class MainGUI extends JFrame implements SimulationUpdateListener, Refresh
             String projectPath = System.getProperty("user.dir");
             String configPath = projectPath + "/settings/configurations/";
 
-            gui.simulationRunner.loadConfigurationFromFile(new File(configPath + args[0]));
-            gui.updateEntries(simulationRunner.getEnvironment());
-            gui.loadMap(false);
+            if (args.length != 0) {
+                gui.simulationRunner.loadConfigurationFromFile(new File(configPath + args[0]));
+                gui.updateEntries(simulationRunner.getEnvironment());
+                gui.loadMap(false);
 
-            // Choose name of algorithm (No Adaptation, Signal-based, Distance-based)
+                // Choose name of algorithm (No Adaptation, Signal-based, Distance-based)
 
-//            var algorithms = gui.simulationRunner.getAlgorithms();
-//            for (GenericFeedbackLoop algorithm : algorithms) {
-//                if (algorithm.getName().equals(profile_name)) {
-//                    gui.selectedInputProfile = inputProfile;
-//                }
-//            }
-            String chosenOption = args[1];
-            gui.simulationRunner.setApproach(chosenOption);
+    //            var algorithms = gui.simulationRunner.getAlgorithms();
+    //            for (GenericFeedbackLoop algorithm : algorithms) {
+    //                if (algorithm.getName().equals(profile_name)) {
+    //                    gui.selectedInputProfile = inputProfile;
+    //                }
+    //            }
+                String chosenOption = args[1];
+                gui.simulationRunner.setApproach(chosenOption);
 
-            //Select inputprofile (ReliableEfficient, ReliableEfficientOpen)
-            String profile_name = args[2];
-            for (InputProfile inputProfile : gui.simulationRunner.getInputProfiles()){
-                if (inputProfile.getName().equals(profile_name)) {
-                    gui.selectedInputProfile = inputProfile;
+                //Select inputprofile (ReliableEfficient, ReliableEfficientOpen)
+                String profile_name = args[2];
+                for (InputProfile inputProfile : gui.simulationRunner.getInputProfiles()) {
+                    if (inputProfile.getName().equals(profile_name)) {
+                        gui.selectedInputProfile = inputProfile;
+                    }
                 }
+                DingNetCache.updateLastUsedInputProfile(gui.selectedInputProfile.getName());
+                gui.updateInputProfiles();
+                gui.updateAdaptationGoals();
+
+                //Set speed
+                int speedvalue = Integer.parseInt(args[3]);
+                gui.simulationSpeed.setValue(SettingsReader.getInstance().getBaseVisualizationSpeed() * speedvalue);
+
+                // Single Run
+                gui.doRun((RunMode.Single));
             }
-            DingNetCache.updateLastUsedInputProfile(gui.selectedInputProfile.getName());
-            gui.updateInputProfiles();
-            gui.updateAdaptationGoals();
-
-            //Set speed
-            int speedvalue = Integer.parseInt(args[3]);
-            gui.simulationSpeed.setValue(SettingsReader.getInstance().getBaseVisualizationSpeed() * speedvalue);
-
-            // Single Run
-            gui.doRun((RunMode.Single));
         });
     }
 
@@ -432,7 +448,7 @@ public class MainGUI extends JFrame implements SimulationUpdateListener, Refresh
      * Update the legend next to the map with entries of gateways and motes.
      * @param environment The environment in which the gateways/motes are located.
      */
-    private void updateEntries(Environment environment) {
+    public void updateEntries(Environment environment) {
         entitesPanel.removeAll();
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.gridx = 0;
@@ -569,7 +585,7 @@ public class MainGUI extends JFrame implements SimulationUpdateListener, Refresh
      * Load the open street map, together with all the painters for motes/gateways/...
      * @param refresh If false, initialize the map viewer to the center of the map with a default zoom level.
      */
-    private void loadMap(boolean refresh) {
+    public void loadMap(boolean refresh) {
         Environment environment = simulationRunner.getEnvironment();
 
         if (!refresh) {
@@ -1086,11 +1102,13 @@ public class MainGUI extends JFrame implements SimulationUpdateListener, Refresh
         switch (type) {
             case Single:
                 simulationRunner.setupSingleRun();
-                simulationRunner.simulate(this.simulationSpeed, this);
+                simulationRunner.setSpeed(this.simulationSpeed);
+                simulationRunner.simulate(this);
                 break;
             case Timed:
                 simulationRunner.setupTimedRun();
-                simulationRunner.simulate(this.simulationSpeed, this);
+                simulationRunner.setSpeed(this.simulationSpeed);
+                simulationRunner.simulate(this);
                 break;
             case Multi:
                 simulationRunner.totalRun(this::setProgressTotalRun);

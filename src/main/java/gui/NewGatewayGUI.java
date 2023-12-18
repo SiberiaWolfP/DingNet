@@ -42,7 +42,7 @@ public class NewGatewayGUI {
 
         saveButton.addActionListener(e -> {
             environment.addGateway(new Gateway(Long.parseUnsignedLong(EUIDtextField.getText()),
-                (int) xPosSpinner.getValue(), (int) yPosSpinner.getValue(),
+                (int)(double) xPosSpinner.getValue(), (int)(double) yPosSpinner.getValue(),
                 (int) powerSpinner.getValue(), (int) SFSpinner.getValue(),
                 environment));
             parent.refresh();
@@ -65,11 +65,11 @@ public class NewGatewayGUI {
     }
 
     private void updateLatField() {
-        GUIUtil.updateTextFieldCoordinate(LongitudeTextField, environment.getMapHelper().toLongitude((int) xPosSpinner.getValue()), "E", "W");
+        GUIUtil.updateTextFieldCoordinate(LongitudeTextField, environment.getMapHelper().toLongitude((int)(double)xPosSpinner.getValue()), "E", "W");
     }
 
     private void updateLonField() {
-        GUIUtil.updateTextFieldCoordinate(LatitudeTextField, environment.getMapHelper().toLatitude((int) yPosSpinner.getValue()), "N", "S");
+        GUIUtil.updateTextFieldCoordinate(LatitudeTextField, environment.getMapHelper().toLatitude((int)(double) yPosSpinner.getValue()), "N", "S");
     }
 
     public JPanel getMainPanel() {

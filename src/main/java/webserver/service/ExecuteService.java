@@ -23,20 +23,20 @@ public class ExecuteService {
     public boolean executeAdaptation(ExecuteDTO executeDTO) {
         SimulationRunner simulationRunner = SimulationRunner.getInstance();
 
-        if (checkAdaptationApproaches(executeDTO.getAdaptationApproaches())) {
-            simulationRunner.setApproach(executeDTO.getAdaptationApproaches());
-        } else {
-            return false;
-        }
+//        if (checkAdaptationApproaches(executeDTO.getAdaptationApproaches())) {
+//            simulationRunner.setApproach(executeDTO.getAdaptationApproaches());
+//        } else {
+//            return false;
+//        }
 
-        if (checkAdaptationGoal(executeDTO.getAdaptationGoals())) {
-            QualityOfService qualityOfService = new QualityOfService(new HashMap<>());
-            qualityOfService.putAdaptationGoal(executeDTO.getAdaptationGoals().getName(),
-                (IntervalAdaptationGoal) executeDTO.getAdaptationGoals().getAdaptationGoal());
-            simulationRunner.updateQoS(qualityOfService);
-        } else {
-            return false;
-        }
+//        if (checkAdaptationGoal(executeDTO.getAdaptationGoals())) {
+//            QualityOfService qualityOfService = new QualityOfService(new HashMap<>());
+//            qualityOfService.putAdaptationGoal(executeDTO.getAdaptationGoals().getName(),
+//                (IntervalAdaptationGoal) executeDTO.getAdaptationGoals().getAdaptationGoal());
+//            simulationRunner.updateQoS(qualityOfService);
+//        } else {
+//            return false;
+//        }
 
         for (MoteOptionsDTO moteOptions : executeDTO.getMoteOptions()) {
             if (checkMoteOptions(moteOptions)) {
@@ -47,7 +47,7 @@ public class ExecuteService {
                 if (mathedMote == null) {
                     return false;
                 }
-                simulationRunner.getSimulation().getApproach().getMoteEffector().setPower(mathedMote, moteOptions.getTransmissionPower());
+                simulationRunner.getSimulation().getApproach().getMoteEffector().setPower(mathedMote, (int)moteOptions.getTransmissionPower());
             } else {
                 return false;
             }
@@ -99,10 +99,10 @@ public class ExecuteService {
         if (!moteExists.get()) {
             return false;
         }
-        List<Integer> transmissionPowerOptions = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
-        if (!transmissionPowerOptions.contains(moteOptions.getTransmissionPower())) {
-            return false;
-        }
+//        List<Integer> transmissionPowerOptions = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
+//        if (!transmissionPowerOptions.contains(moteOptions.getTransmissionPower())) {
+//            return false;
+//        }
         return true;
     }
 }

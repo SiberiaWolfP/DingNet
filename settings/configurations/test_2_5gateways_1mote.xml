@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<configuration>
+    <map>
+        <region>
+            <origin>
+                <latitude>50.866714802830494</latitude>
+                <longitude>4.6808624267578125</longitude>
+            </origin>
+            <size>
+                <width>2773</width>
+                <height>2773</height>
+            </size>
+        </region>
+    </map>
+    <characteristics>
+        <regionProperty numberOfZones="49"/>
+        <row>City-City-City-City-City-City-City</row>
+        <row>City-City-City-City-City-City-City</row>
+        <row>City-City-City-City-Forest-City-City</row>
+        <row>City-City-City-City-City-City-City</row>
+        <row>City-City-City-City-City-City-City</row>
+        <row>City-City-City-Plain-City-City-City</row>
+        <row>City-City-City-City-City-City-City</row>
+    </characteristics>
+    <motes>
+        <mote>
+            <devEUI>11574733802299612772</devEUI>
+            <location>
+                <waypoint id="1"/>
+            </location>
+            <transmissionPower>14</transmissionPower>
+            <spreadingFactor>12</spreadingFactor>
+            <energyLevel>20</energyLevel>
+            <movementSpeed>1.0</movementSpeed>
+            <startMovementOffset>0</startMovementOffset>
+            <periodSendingPacket>30</periodSendingPacket>
+            <startSendingOffset>1</startSendingOffset>
+            <sensors>
+                <sensor SensorType="SOOT"/>
+            </sensors>
+            <path>
+                <connection id="1"/>
+                <connection id="2"/>
+            </path>
+        </mote>
+    </motes>
+    <gateways>
+        <gateway>
+            <devEUI>14363080618188520245</devEUI>
+            <location>
+                <xPos>825</xPos>
+                <yPos>2455</yPos>
+            </location>
+            <transmissionPower>14</transmissionPower>
+            <spreadingFactor>12</spreadingFactor>
+        </gateway>
+        <gateway>
+            <devEUI>15019514708268395044</devEUI>
+            <location>
+                <xPos>1740</xPos>
+                <yPos>2075</yPos>
+            </location>
+            <transmissionPower>14</transmissionPower>
+            <spreadingFactor>12</spreadingFactor>
+        </gateway>
+        <gateway>
+            <devEUI>6447424500915957515</devEUI>
+            <location>
+                <xPos>2589</xPos>
+                <yPos>1046</yPos>
+            </location>
+            <transmissionPower>14</transmissionPower>
+            <spreadingFactor>12</spreadingFactor>
+        </gateway>
+        <gateway>
+            <devEUI>1105059389910614118</devEUI>
+            <location>
+                <xPos>1222</xPos>
+                <yPos>1335</yPos>
+            </location>
+            <transmissionPower>14</transmissionPower>
+            <spreadingFactor>12</spreadingFactor>
+        </gateway>
+        <gateway>
+            <devEUI>808077704044911869</devEUI>
+            <location>
+                <xPos>517</xPos>
+                <yPos>528</yPos>
+            </location>
+            <transmissionPower>14</transmissionPower>
+            <spreadingFactor>12</spreadingFactor>
+        </gateway>
+    </gateways>
+    <wayPoints>
+        <wayPoint id="1">50.888740895502316,4.691677093505859</wayPoint>
+        <wayPoint id="2">50.87086980767951,4.68867301940918</wayPoint>
+        <wayPoint id="3">50.87758580817798,4.715967178344727</wayPoint>
+    </wayPoints>
+    <connections>
+        <connection dst="2" id="1" src="1"/>
+        <connection dst="3" id="2" src="2"/>
+    </connections>
+</configuration>

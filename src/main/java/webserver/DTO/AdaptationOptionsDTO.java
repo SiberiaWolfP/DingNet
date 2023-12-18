@@ -12,27 +12,27 @@ import java.util.List;
 @Schema(description = "Configurations can be set for the adaptation.")
 public class AdaptationOptionsDTO {
 
-    @Schema(description = "The adaptation approaches used in the adaptation")
-    private DiscreteOptions<String> adaptationApproaches = new DiscreteOptions<>(){{
-        setValues(Arrays.asList("No Adaptation", "Signal-based", "Distance-based"));
-    }};
-
-    @Schema(description = "The adaptation goal for adaptation.")
-    private List<QoSOption> adaptationGoals = new ArrayList<>(){{
-        add(new QoSOption(){{
-            setName("reliableCommunication");
-            setAdaptationGoal(new IntervalAdaptationGoalOption(){{
-                setLowerBoundary(new ContinuousOptions<Double>(){{
-                    setStart(-100.0);
-                    setStop(20.0);
-                }});
-                setUpperBoundary(new ContinuousOptions<Double>(){{
-                    setStart(-100.0);
-                    setStop(20.0);
-                }});
-            }});
-        }});
-    }};
+//    @Schema(description = "The adaptation approaches used in the adaptation")
+//    private DiscreteOptions<String> adaptationApproaches = new DiscreteOptions<>(){{
+//        setValues(Arrays.asList("No Adaptation", "Signal-based", "Distance-based"));
+//    }};
+//
+//    @Schema(description = "The adaptation goal for adaptation.")
+//    private List<QoSOption> adaptationGoals = new ArrayList<>(){{
+//        add(new QoSOption(){{
+//            setName("reliableCommunication");
+//            setAdaptationGoal(new IntervalAdaptationGoalOption(){{
+//                setLowerBoundary(new ContinuousOptions<Double>(){{
+//                    setStart(-100.0);
+//                    setStop(20.0);
+//                }});
+//                setUpperBoundary(new ContinuousOptions<Double>(){{
+//                    setStart(-100.0);
+//                    setStop(20.0);
+//                }});
+//            }});
+//        }});
+//    }};
 
     @Schema(description = "The configuration of a mote that can be adapted.")
     private MoteOptions moteOptions = new MoteOptions();

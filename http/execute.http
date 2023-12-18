@@ -2,17 +2,9 @@ PUT http://localhost:8080/execute
 Content-Type: application/json
 
 {
-    "adaptationApproaches": "No Adaptation",
-    "adaptationGoals": {
-        "name": "reliableCommunication",
-        "adaptationGoal": {
-            "lowerBoundary": -40.0,
-            "upperBoundary": -30.0
-        }
-    },
     "moteOptions": [
         {
-            "EUI": -545974775904879546,
+            "EUI": 1213425808587239411,
             "transmissionPower": 9
         }
     ]

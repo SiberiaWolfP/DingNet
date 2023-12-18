@@ -10,6 +10,10 @@ import iot.lora.*;
 import iot.strategy.consume.ConsumePacketStrategy;
 import iot.strategy.store.MaintainLastPacket;
 import iot.strategy.store.ReceivedPacketStrategy;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.jxmapviewer.viewer.GeoPosition;
 import selfadaptation.instrumentation.FeedbackLoopGatewayBuffer;
 import util.MapHelper;
@@ -52,6 +56,7 @@ public class Mote extends NetworkEntity {
 
     // A List of MoteSensors representing all sensors on the mote.
     @Schema(description = "The list of sensors on the mote.")
+    @JsonIgnore
     private List<MoteSensor> moteSensors;
 
     // A path representing the connections the mote will follow.
@@ -71,6 +76,7 @@ public class Mote extends NetworkEntity {
 
     // An integer representing the energy level of the mote.
     @Schema(description = "The energy level of the mote.")
+    @JsonIgnore
     private int energyLevel;
 
     // A double representing the movement speed of the mote.
@@ -125,11 +131,20 @@ public class Mote extends NetworkEntity {
 
     // The distance to the nearest gateway
     @Schema(description = "The distance to the nearest gateway.")
+    @JsonIgnore
     private double shortestDistanceToGateway = Double.MAX_VALUE;
 
     // The highest signal power a gateway has received from this mote
     @Schema(description = "The highest signal power a gateway has received from this mote")
     private double highestSignalPower = Double.MIN_VALUE;
+
+    @Schema(description = "The best gateway EUI with highest signal power from last communication")
+    @Getter @Setter
+    private long bestGatewayEUI = -1;
+
+    @Schema(description = "The distance to the best gateway")
+    @Getter @Setter
+    private double bestGatewayDistance = Double.MAX_VALUE;
 
     //endregion
 

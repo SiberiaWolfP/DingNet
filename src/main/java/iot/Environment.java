@@ -3,6 +3,8 @@ package iot;
 import iot.networkentity.Gateway;
 import iot.networkentity.Mote;
 import iot.networkentity.NetworkEntity;
+import lombok.Getter;
+import lombok.Setter;
 import org.jxmapviewer.viewer.GeoPosition;
 import util.Connection;
 import util.GraphStructure;
@@ -50,6 +52,8 @@ public class Environment implements Serializable {
     /**
      * The actual map containing the characteristics of the environment.
      */
+    @Getter
+    @Setter
     private Characteristic[][] characteristics;
 
     /**
@@ -67,7 +71,8 @@ public class Environment implements Serializable {
      */
     private GlobalClock clock;
 
-
+    @Setter
+    @Getter
     private GraphStructure graph;
     private MapHelper mapHelper;
 
@@ -144,10 +149,6 @@ public class Environment implements Serializable {
         this.numberOfZones = numberOfZones;
     }
 
-
-    public GraphStructure getGraph() {
-        return this.graph;
-    }
 
     public MapHelper getMapHelper() {
         return this.mapHelper;

@@ -1,0 +1,7 @@
+POST http://localhost:8080/init_world
+Content-Type: application/json
+
+{
+    "configName": "mock.xml",
+    "speed": 5
+}

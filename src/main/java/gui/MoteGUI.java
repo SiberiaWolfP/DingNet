@@ -527,6 +527,10 @@ public class MoteGUI {
         isActiveCheckBox.setEnabled(true);
         isActiveCheckBox.setText("is active");
         mainPanel.add(isActiveCheckBox, new GridConstraints(12, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        isLLSACompliantCheckBox = new JCheckBox();
+        isLLSACompliantCheckBox.setEnabled(true);
+        isLLSACompliantCheckBox.setText("is LLSA compliant");
+        mainPanel.add(isLLSACompliantCheckBox, new GridConstraints(13, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**

@@ -8,14 +8,14 @@ import application.routing.heuristic.SimplePollutionHeuristic;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import gui.MainGUI;
 import iot.mqtt.MQTTClientFactory;
-import iot.networkentity.Gateway;
-import iot.networkentity.Mote;
-import iot.networkentity.NetworkServer;
+import iot.networkentity.*;
 import lombok.Data;
 import lombok.Generated;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
+import org.jxmapviewer.viewer.GeoPosition;
+import org.w3c.dom.Element;
 import selfadaptation.adaptationgoals.IntervalAdaptationGoal;
 import selfadaptation.adaptationgoals.ThresholdAdaptationGoal;
 import selfadaptation.feedbackloop.GenericFeedbackLoop;
@@ -23,18 +23,12 @@ import selfadaptation.feedbackloop.ReliableEfficientDistanceGateway;
 import selfadaptation.feedbackloop.SignalBasedAdaptation;
 import selfadaptation.instrumentation.MoteEffector;
 import selfadaptation.instrumentation.MoteProbe;
-import util.Constants;
-import util.MutableInteger;
-import util.Pair;
-import util.Statistics;
+import util.*;
 import util.xml.*;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class SimulationRunner {
@@ -53,6 +47,13 @@ public class SimulationRunner {
     private RoutingApplication routingApplication;
     private PollutionMonitor pollutionMonitor;
     private NetworkServer networkServer;
+    @Getter
+    @Setter
+    private MutableInteger speed = new MutableInteger(1);
+
+    @Getter
+    @Setter
+    private long simulationStep = 0;
 
     public enum SimulationStatus {
         NOT_STARTED,
@@ -208,6 +209,7 @@ public class SimulationRunner {
         this.networkServer.reset();
     }
 
+
     // endregion
 
 
@@ -221,23 +223,22 @@ public class SimulationRunner {
         if (simulation.isFinished()) {
             simulationStatus = SimulationStatus.STOPPED;
         }
-        return simulation.isFinished();
+        return simulation.isFinished() || (simulationStatus == SimulationStatus.STOPPED);
     }
 
     /**
      * Simulate a whole run, until the simulation is finished.
-     * @param updateFrequency The frequency of callback updates to the {@code listener} (expressed in once every x simulation steps).
      * @param listener The listener which receives the callbacks every x simulation steps.
      */
-    public void simulate(MutableInteger updateFrequency, SimulationUpdateListener listener) {
+    public void simulate(SimulationUpdateListener listener) {
         new Thread(() -> {
-            long simulationStep = 0;
+            simulationStep = 0;
             while (!this.isSimulationFinished()) {
                 this.simulation.simulateStep();
 
                 // Visualize every x seconds
-                if (simulationStep++ % (updateFrequency.intValue() * 1000) == 0) {
-                    listener.update();
+                if (simulationStep++ % (this.speed.intValue() * 1000L) == 0) {
+//                    listener.update();
                 }
             }
 
@@ -319,6 +320,99 @@ public class SimulationRunner {
         setupApplications();
     }
 
+    public void resetGateways(int numberOfGateways) {
+        Random random = new Random();
+        int width = this.getEnvironment().getMaxXpos();
+        int height = this.getEnvironment().getMaxYpos();
+
+        this.getEnvironment().getGateways().clear();
+
+        // Make random gateways
+        for (int i = 0; i < numberOfGateways; i++) {
+            int x = random.nextInt(width);
+            int y = random.nextInt(height);
+            long devEUI = random.nextLong(Long.MAX_VALUE);
+            Gateway gateway = new Gateway(devEUI, x, y, 12, 12, this.getEnvironment());
+            this.getEnvironment().addGateway(gateway);
+        }
+    }
+
+    public void resetMote() {
+        // Make random map characteristics
+        Random random = new Random();
+        int width = this.getEnvironment().getMaxXpos();
+        int height = this.getEnvironment().getMaxYpos();
+
+        this.getEnvironment().getMotes().clear();
+
+        // Make random path
+        int numberOfWaypoints = 100;
+        Map<Long, GeoPosition> waypoints = new HashMap<>();
+        Map<Long, Connection> connections = new HashMap<>();
+        Path path = new Path(this.getEnvironment().getGraph());
+        for (int i = 0; i < numberOfWaypoints; i++) {
+            int x = random.nextInt(width);
+            int y = random.nextInt(height);
+            GeoPosition geoPosition = this.getEnvironment().getMapHelper().toGeoPosition(x, y);
+            waypoints.put((long) i, geoPosition);
+            path.addPosition(geoPosition);
+        }
+        for (int i = 0; i < numberOfWaypoints - 1; i++) {
+            connections.put((long) i, new Connection(i, (long) i + 1));
+        }
+        this.getEnvironment().setGraph(new GraphStructure(waypoints, connections));
+
+        // Make random mote
+        Pair<Double, Double> pos = this.getEnvironment().getMapHelper().toMapCoordinate(waypoints.get((long)0));
+        long devEUI = random.nextLong(Long.MAX_VALUE);
+        LinkedList<MoteSensor> sensors = new LinkedList<>();
+        sensors.add(MoteSensor.valueOf("SOOT"));
+        Mote mote = MoteFactory.createMote(devEUI, pos.getLeft(), pos.getRight(), 12, 12,
+            sensors, 100, path, 1, 1,
+            20, 1, this.getEnvironment());
+        this.getEnvironment().addMote(mote);
+
+        for (Gateway gateway : simulation.getEnvironment().getGateways()) {
+            for (int i = 0; i < algorithms.size(); i++) {
+                gateway.addSubscription(moteProbe.get(i));
+            }
+        }
+    }
+
+    public void resetMap() {
+        Random random = new Random();
+        int width = this.getEnvironment().getMaxXpos();
+        int height = this.getEnvironment().getMaxYpos();
+
+        Characteristic[][] characteristics = this.getEnvironment().getCharacteristics();
+
+        int numberOfZones = this.getEnvironment().getNumberOfZones();
+        long n = Math.round(Math.sqrt(numberOfZones));
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                Characteristic characteristic = Characteristic.values()[random.nextInt(Characteristic.values().length)];
+
+                double widthSize = ((double) width) / n;
+                double heightSize = ((double) height) / n;
+                for (int x = (int) Math.round(j * widthSize); x < (int) Math.round((j + 1) * widthSize); x++) {
+                    for (int y = (int) Math.round(i * heightSize); y < (int) Math.round((i + 1) * heightSize); y++) {
+                        characteristics[x][y] = characteristic;
+                    }
+                }
+            }
+        }
+
+        this.getEnvironment().setCharacteristics(characteristics);
+    }
+
+    public void reconnect() {
+        for (Gateway gateway : simulation.getEnvironment().getGateways()) {
+            for (int i = 0; i < algorithms.size(); i++) {
+                gateway.addSubscription(moteProbe.get(i));
+            }
+        }
+    }
 
     /**
      * Save a configuration to a file.
