@@ -1,0 +1,48 @@
+@startuml
+'https://plantuml.com/deployment-diagram
+
+node "Management Client" <<Device>> {
+    artifact "UPISAS Instance" <<artifact>> {
+        component "DingNetStrategy" <<component>> {
+            component "monitor"
+            component "analyze"
+            component "plan"
+            component "execute"
+        }
+        component "DingNet_Exemplar" <<component>>
+        component "DQN" <<component>>
+        component "Baseline" <<component>>
+        interface "CLI" <<interface>>
+        file "DQN Checkpoint" <<file>>
+
+        "DingNetStrategy" <.u. "DingNet_Exemplar" : manipulate
+        "DingNetStrategy" *-l- "DQN" : train
+        "DingNetStrategy" *-- "Baseline" : use
+        "DQN" <.. "DQN Checkpoint" : save and load
+    }
+}
+
+node "Managed Server" <<Device>> {
+    artifact "DingNet Instance" <<artifact>> {
+        component DingNet <<component>> {
+            component SimulationRunner <<component>>
+            component Simulation <<component>>
+            component Environment <<component>>
+            file "Config File" <<file>>
+
+            Simulation --* SimulationRunner : runs
+            Environment ..> SimulationRunner : reference
+            Environment .r.> Simulation : reference
+            "Config File" .r.> Environment : load
+        }
+        component "SpringBoot Server" <<component>> {
+            interface "REST API" <<interface>>
+        }
+
+        "SpringBoot Server" .u.> "DingNet" : manipulate
+    }
+}
+
+"DingNet_Exemplar" -- "SpringBoot Server" : HTTP
+
+@enduml

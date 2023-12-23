@@ -1,0 +1,34 @@
+@startuml
+'https://plantuml.com/activity-diagram-beta
+
+|#LightBlue|Strategy.monitor|
+start
+:access \monitor;
+:get DingNet state;
+:append to knowledge.monitored_data;
+|#LightGreen|Strategy.analyze|
+if (state changed?) then (yes)
+  :read knowledge.monitored_data;
+  :construct state, reward;
+  :append to knowledge.analysis_data;
+
+|#LightPink|Strategy.plan|
+    :read knowledge.analysis_data;
+    :rename state to next_state;
+    :feed next_state, reward to DQN;
+    group DQN
+    :store (state, action, reward, next_state) to memory;
+    :save next_state as state;
+    :predict action by state;
+    :optimize DQN;
+    end group
+    :append action to knowledge.plan_data;
+|#LightYellow|Strategy.execute|
+        :read knowledge.plan_data;
+        :access \execute;
+        :put action;
+else (no)
+endif
+stop
+
+@enduml

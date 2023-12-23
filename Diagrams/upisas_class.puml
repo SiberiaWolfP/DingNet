@@ -1,0 +1,125 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+class DingNet_Exemplar {
+    -debug
+    -config_name
+    -speed
+    +__init__()
+    +start_run()
+    +init_world()
+    +start_simulation()
+    +reset_map()
+    +reset_entities()
+    +reset_gateways()
+    +reset_mote()
+}
+
+abstract class Exemplar {
+    #base_endpoint
+    #exemplar_container
+    +__init__()
+    +start_run()
+    +start_container()
+    +stop_container()
+    +pause_container()
+    +unpause_container()
+    +get_container_status()
+}
+
+abstract class Strategy {
+    #exemplar
+    #knowledge
+    +__init__()
+    +monitor()
+    +analyze()
+    +plan()
+    +execute()
+    +ping()
+    +get_adaptation_options()
+    +get_monitor_schema()
+    +get_execute_schema()
+    +get_adaptation_options_schema()
+    -perform_get_request()
+}
+
+class DingNetStrategy {
+    -steps_per_episode
+    -mode
+    -adaptation_step
+    -threshold
+    -algorithm
+    -planner
+    -progress_bar
+    -episode
+    -episode_reward
+    +__init__()
+    +analyze()
+    +plan()
+    -normalized_observation()
+}
+
+class Knowledge {
+    +monitored_data
+    +analysis_data
+    +plan_data
+    +adaptation_options
+    +monitor_schema
+    +execute_schema
+    +adaptation_options_schema
+}
+
+class DQN {
+    -device
+    -BATCH_SIZE
+    -GAMMA
+    -EPS_START
+    -EPS_END
+    -EPS_DECAY
+    -TAU
+    -LR
+    -n_actions
+    -n_observations
+    -policy_net
+    -target_net
+    -optimizer
+    -memory
+    -steps_done
+    -eps_threshold
+    -state
+    -next_state
+    -reward
+    -action
+    -steps
+    -select_action()
+    -optimize_model()
+    -soft_update()
+    -save_checkpoint()
+    +learn()
+    +predict()
+}
+
+class ReplayMemory {
+    -memory
+    +__init__()
+    +__len__()
+    +push()
+    +sample()
+}
+
+class SignalBased {
+    -threshold
+    +__init__()
+    +predict()
+}
+
+Exemplar <|-- DingNet_Exemplar : extends
+Strategy <|-l- DingNetStrategy : extends
+Strategy *-- Knowledge : has
+DQN *-- ReplayMemory : has
+DingNetStrategy *-- SignalBased : has
+DingNetStrategy <.. DingNet_Exemplar : uses
+DingNetStrategy *-l- DQN : has
+DingNetStrategy <.. Knowledge : uses
+
+@enduml

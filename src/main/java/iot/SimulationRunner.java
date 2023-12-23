@@ -238,7 +238,7 @@ public class SimulationRunner {
 
                 // Visualize every x seconds
                 if (simulationStep++ % (this.speed.intValue() * 1000L) == 0) {
-//                    listener.update();
+                    listener.update();
                 }
             }
 
@@ -346,7 +346,7 @@ public class SimulationRunner {
         this.getEnvironment().getMotes().clear();
 
         // Make random path
-        int numberOfWaypoints = 100;
+        int numberOfWaypoints = 1000;
         Map<Long, GeoPosition> waypoints = new HashMap<>();
         Map<Long, Connection> connections = new HashMap<>();
         Path path = new Path(this.getEnvironment().getGraph());
@@ -372,11 +372,11 @@ public class SimulationRunner {
             20, 1, this.getEnvironment());
         this.getEnvironment().addMote(mote);
 
-        for (Gateway gateway : simulation.getEnvironment().getGateways()) {
-            for (int i = 0; i < algorithms.size(); i++) {
-                gateway.addSubscription(moteProbe.get(i));
-            }
-        }
+//        for (Gateway gateway : simulation.getEnvironment().getGateways()) {
+//            for (int i = 0; i < algorithms.size(); i++) {
+//                gateway.addSubscription(moteProbe.get(i));
+//            }
+//        }
     }
 
     public void resetMap() {
