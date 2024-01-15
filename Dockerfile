@@ -21,9 +21,11 @@ RUN mv /app/target/DingNet-1.2.1.jar /app.jar
 # move settings file to root
 RUN mv /app/settings /settings
 
+RUN echo "export DISPLAY=:0" >> /etc/profile
+
 #CMD ["--server.port=8080"]
 WORKDIR /
 EXPOSE 8080
 
-#ENTRYPOINT ["java","-jar","/app.jar", "--server.port=8080"]
+ENTRYPOINT ["java","-jar","/app.jar", "--server.port=8080"]
 #CMD [ "sleep", "infinity" ]

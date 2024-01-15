@@ -32,9 +32,9 @@
             <spreadingFactor>12</spreadingFactor>
             <energyLevel>20</energyLevel>
             <movementSpeed>1.0</movementSpeed>
-            <startMovementOffset>0</startMovementOffset>
+            <startMovementOffset>1</startMovementOffset>
             <periodSendingPacket>30</periodSendingPacket>
-            <startSendingOffset>1</startSendingOffset>
+            <startSendingOffset>2</startSendingOffset>
             <sensors>
                 <sensor SensorType="SOOT"/>
             </sensors>
